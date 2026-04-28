@@ -101,6 +101,16 @@ df = pd.DataFrame(rows)
 supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
 scrape_time = datetime.now().isoformat()
 
+try:
+  df["score"] = df["score"].fillna(0)
+  df["comments"] = df["comments"].fillna(0)
+  df["author"] = df["author"].fillna("Unknown")
+
+except:
+  print("🔴 | An error occured while cleaning the data")
+else:
+  print("🟢 | Cleaned the data")
+
 
 rows_to_append = []
 
