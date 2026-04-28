@@ -93,60 +93,27 @@ scrape_data()
 df = pd.DataFrame(rows)
 
 
-
-
-#################
-# Data Cleaning #
-#################
-
-
-# Fill missing ratings with "Unknown" so they still appear in charts
-try:
-  df["rating"] = df["rating"].fillna("Unknown")
-except:
-  print("🔴 | An error occured while cleaning the data")
-else:
-  print("🟢 | Cleaned the data")
-
-
 ############
 # Supabase #
 ############
 
-try:
-  supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
-except:
-  print("🔴 | An error occured while connecting to Supabase")
-else:
-  print("🟢 | Connected to supabase")
 
+supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
 scrape_time = datetime.now().isoformat()
 
-def insert_data_to_supabase():
-  rows_to_append = []
 
-  for _, row in df.iterrows():
+rows_to_append = []
 
-    rows_to_append.append({
-        "rank":        int(row.get("rank", 0)),
-        "title":       str(row.get("title", "")),
-        "score":       int(row.get("score", 0)),
-        "date":        str(row.get("date", "")),
-        "comments":    int(row.get("comments", 0)),
-        "author":      str(row.get("author", "")),
-        "scraped_at":  scrape_time
-    })
+for _, row in df.iterrows():
 
-  result = supabase.table("posts").insert(rows_to_append).execute()
+  rows_to_append.append({
+      "rank":        int(row.get("rank", 0)),
+      "title":       str(row.get("title", "")),
+      "score":       int(row.get("score", 0)),
+      "date":        str(row.get("date", "")),
+      "comments":    int(row.get("comments", 0)),
+      "author":      str(row.get("author", "")),
+      "scraped_at":  scrape_time
+  })
 
-
-try:
-  insert_data_to_supabase()
-except:
-  print("🔴 | An error occured while inserting data to Supabase")
-else:
-  print("🟢 | Inserted data to Supabase")
-
-
-# preview
-# df
+result = supabase.table("posts").insert(rows_to_append).execute()
